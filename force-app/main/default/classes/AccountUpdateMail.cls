@@ -6,12 +6,12 @@ public with sharing class AccountUpdateMail {
         Messaging.SingleEmailMessage mail =  new Messaging.SingleEmailMessage();
         List<String> sendTo = getAddreses(acc);
 
-        Assignment_History__c check = [select New_Owner__c, Previous_Owner__c from Assignment_History__c where Account__c =:acc.Id];
+        Assignment_History__c check = [select New_Owner__c, Previous_Owner__c from Assignment_History__c where Account__c =:acc.Id limit 1];
 
         if(check.Previous_Owner__c == null){
             mail.setToAddresses(sendTo);
             mail.setSubject('Account owner updated');
-            String body = 'The account owner has been updated to ' + acc.OwnerId;
+            String body = 'The account owner has been updated to ' + getNameById(acc.OwnerId);
             mail.setHtmlBody(body);
         } else{
        
@@ -26,7 +26,7 @@ public with sharing class AccountUpdateMail {
     
     @TestVisible
     private static List<String> getAddreses(Account acc){
-        Assignment_History__c check = [select New_Owner__c, Previous_Owner__c from Assignment_History__c where Account__c =:acc.Id];
+        Assignment_History__c check = [select New_Owner__c, Previous_Owner__c from Assignment_History__c where Account__c =:acc.Id limit 1];
         List<String> retorno = new List<String>();
 
         if(check.New_Owner__c != null){
@@ -45,8 +45,9 @@ public with sharing class AccountUpdateMail {
 
     @TestVisible
     private static String getNameById(Id checkId){
-        User u = [select Id, Name from user where id =: checkId];
-        return u.Name;
+        User u = [select Id, Name  from user where Id =: checkId limit 1];
+        String name = u.Name;
+        return name;
     }
     
 }

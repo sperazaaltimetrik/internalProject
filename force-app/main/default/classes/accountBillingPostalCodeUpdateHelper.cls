@@ -1,8 +1,4 @@
-// When an Account’s BillingPostalCode (aka Zip Code), is changed, 
-// A)Change the Account Owner to the sales representative assigned to the new zip code
-// B)Change the Owner field of all the Account’s Contacts to the same sales rep 
-// C)Change the Owner field of all the Account’s Open Opportunities to the same sales rep
-//Territory object
+
 public with sharing class AccountBillingPostalCodeUpdateHelper {
  
     public static void triggerHelper(List<Account> triggerList, Map<Id, Account> oldList){
