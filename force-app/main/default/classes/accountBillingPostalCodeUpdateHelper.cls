@@ -31,7 +31,7 @@ public with sharing class AccountBillingPostalCodeUpdateHelper {
 
                 opportunityOwnerUpdate(acc);
 
-                //AccountUpdateMail.emailUpdate(acc);
+                AccountUpdateMail.emailUpdate(acc);
                 
             }
         }
