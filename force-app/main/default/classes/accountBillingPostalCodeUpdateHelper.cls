@@ -13,8 +13,8 @@ public with sharing class AccountBillingPostalCodeUpdateHelper {
         }
 
         if(aux.size()>0) {
-            accountOwnerUpdate(aux);
             AssignmentHistoryCreation.assignmentHistoryCreationAccountUpdate(aux, oldRecords);
+            accountOwnerUpdate(aux);   
         }
     }
      
