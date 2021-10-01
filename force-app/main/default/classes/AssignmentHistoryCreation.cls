@@ -1,51 +1,52 @@
 public with sharing class AssignmentHistoryCreation {
-    public static void assignmentHistoryCreationAccountUpdate(List<Account> updateList, Map<Id, Account> oldRecords){
-        List<Assignment_History__c> creationList = new List<Assignment_History__c>();
+    public static void assignmentHistoryCreationAccountUpdate(Account acc, Map<Id, Account> oldAccountMap){
 
-        for(Account acc : updateList){
-            Assignment_History__c toAdd = new Assignment_History__c();
+        Assignment_History__c assignHistory = new Assignment_History__c();
 
-            toAdd.Name = acc.Name + ' History';
+        assignHistory.Name = acc.Name + ' History';
 
-            toAdd.Account__c = acc.Id;
-            toAdd.Changed_By__c = acc.LastModifiedBy.Id;
-            
-            toAdd.Previous_Owner__c = oldRecords.get(acc.Id).OwnerId;
-            toAdd.New_Owner__c = acc.OwnerId;
+        assignHistory.Account__c = acc.Id;
+        assignHistory.Changed_By__c = acc.LastModifiedById;
+        
+        assignHistory.Previous_Owner__c = oldAccountMap.get(acc.Id).OwnerId;
+        assignHistory.New_Owner__c = acc.OwnerId;
 
-            if(isTerritoryByAccount(oldRecords.get(acc.Id))) {
-                toAdd.Previous_Territory__c = getTerritoryByAccount(oldRecords.get(acc.Id));
-            } 
-            
-            if(isTerritoryByAccount(acc)){
-            toAdd.New_Territory__c = getTerritoryByAccount(acc);
-            }
-            creationList.add(toAdd);
+        if(isTerritoryByAccount(oldAccountMap.get(acc.Id))) {
+            assignHistory.Previous_Territory__c = getTerritoryByAccount(oldAccountMap.get(acc.Id));
+        } 
+        
+        if(isTerritoryByAccount(acc)){
+            assignHistory.New_Territory__c = getTerritoryByAccount(acc);
         }
 
-        insert creationList;
+        insert assignHistory;
     }
 
     public static void assignmentHistoryCreationAccountInsert(Account acc){
-        Assignment_History__c toAdd = new Assignment_History__c();
+        Assignment_History__c assignHistory = new Assignment_History__c();
 
-            toAdd.Name = acc.Name + ' History';
+            assignHistory.Name = acc.Name + ' History';
 
-            toAdd.Account__c = acc.Id;
-            toAdd.Changed_By__c = acc.LastModifiedById;
+            assignHistory.Account__c = acc.Id;
+            assignHistory.Changed_By__c = acc.LastModifiedById;
             
-            toAdd.New_Owner__c = acc.OwnerId;
+            assignHistory.New_Owner__c = acc.OwnerId;
+            assignHistory.Previous_Owner__c = null;
             
             if(isTerritoryByAccount(acc)){
-            toAdd.New_Territory__c = getTerritoryByAccount(acc);
-            }
-            insert toAdd;
+                assignHistory.New_Territory__c = getTerritoryByAccount(acc);
+            } 
+            assignHistory.Previous_Territory__c = null;
+
+            insert assignHistory;
     }
 
+    @TestVisible
     private static Boolean isTerritoryByAccount(Account account){
         return [Select Id, Owner__c, Zip_Code__c From Territory__c where Zip_Code__c =: account.BillingPostalCode limit 1].size() > 0;
     }
 
+    @TestVisible
     private static Id getTerritoryByAccount(Account account){
         Territory__c aux = [Select Id, Owner__c, Zip_Code__c From Territory__c where Zip_Code__c =: account.BillingPostalCode limit 1];
         return aux.id;
